@@ -60,7 +60,7 @@ linksLetterFont: font(24px);
 linksMargin: margins(0px, 7px, 0px, 5px);
 linksTextTop: 6px;
 linksBorder: 1px;
-linksBorderFg: #eaeaea;
+linksBorderFg: #444;
 linksDateColor: #808080;
 linksDateMargin: margins(0px, 15px, 0px, 2px);
 linksPhotoSize: 46px;

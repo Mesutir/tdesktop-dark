@@ -436,7 +436,7 @@ void ContactsInner::paintDialog(Painter &p, PeerData *peer, ContactData *data, b
 		}
 	} else {
 		if (inverse) {
-			p.setPen(st::white);
+			p.setPen(st::black);
 		} else if ((user && (uname || data->onlineColor)) || (peer->isChannel() && uname)) {
 			p.setPen(st::contactsStatusFgOnline);
 		} else {

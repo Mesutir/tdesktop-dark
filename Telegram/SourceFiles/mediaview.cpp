@@ -442,6 +442,109 @@ void MediaView::step_radial(uint64 ms, bool timer) {
 	}
 }
 
+void MediaView::zoomIn() {
+	int32 newZoom = _zoom;
+	if (newZoom == ZoomToScreenLevel) {
+		if (qCeil(_zoomToScreen) <= MaxZoomLevel) {
+			newZoom = qCeil(_zoomToScreen);
+		}
+	}
+	else {
+		if (newZoom < _zoomToScreen && (newZoom + 1 > _zoomToScreen || (_zoomToScreen > MaxZoomLevel && newZoom == MaxZoomLevel))) {
+			newZoom = ZoomToScreenLevel;
+		}
+		else if (newZoom < MaxZoomLevel) {
+			++newZoom;
+		}
+	}
+	zoomUpdate(newZoom);
+}
+
+void MediaView::zoomOut() {
+	int32 newZoom = _zoom;
+	if (newZoom == ZoomToScreenLevel) {
+		if (qFloor(_zoomToScreen) >= -MaxZoomLevel) {
+			newZoom = qFloor(_zoomToScreen);
+		}
+	}
+	else {
+		if (newZoom > _zoomToScreen && (newZoom - 1 < _zoomToScreen || (_zoomToScreen < -MaxZoomLevel && newZoom == -MaxZoomLevel))) {
+			newZoom = ZoomToScreenLevel;
+		}
+		else if (newZoom > -MaxZoomLevel) {
+			--newZoom;
+		}
+	}
+	zoomUpdate(newZoom);
+}
+
+void MediaView::zoomReset() {
+	int32 newZoom = _zoom;
+	if (_zoom == 0) {
+		if (qFloor(_zoomToScreen) == qCeil(_zoomToScreen) && qRound(_zoomToScreen) >= -MaxZoomLevel && qRound(_zoomToScreen) <= MaxZoomLevel) {
+			newZoom = qRound(_zoomToScreen);
+		}
+		else {
+			newZoom = ZoomToScreenLevel;
+		}
+	}
+	else {
+		newZoom = 0;
+	}
+	_x = -_width / 2;
+	_y = -((gifShown() ? _gif->height() : (_current.height() / cIntRetinaFactor())) / 2);
+	float64 z = (_zoom == ZoomToScreenLevel) ? _zoomToScreen : _zoom;
+	if (z >= 0) {
+		_x = qRound(_x * (z + 1));
+		_y = qRound(_y * (z + 1));
+	}
+	else {
+		_x = qRound(_x / (-z + 1));
+		_y = qRound(_y / (-z + 1));
+	}
+	_x += width() / 2;
+	_y += height() / 2;
+	update();
+	zoomUpdate(newZoom);
+}
+
+void MediaView::zoomUpdate(int32 &newZoom) {
+	if (newZoom != ZoomToScreenLevel) {
+		while ((newZoom < 0 && (-newZoom + 1) > _w) || (-newZoom + 1) > _h) {
+			++newZoom;
+		}
+	}
+	if (_zoom != newZoom) {
+		float64 nx, ny, z = (_zoom == ZoomToScreenLevel) ? _zoomToScreen : _zoom;
+		_w = gifShown() ? _gif->width() : (_current.width() / cIntRetinaFactor());
+		_h = gifShown() ? _gif->height() : (_current.height() / cIntRetinaFactor());
+		if (z >= 0) {
+			nx = (_x - width() / 2.) / (z + 1);
+			ny = (_y - height() / 2.) / (z + 1);
+		}
+		else {
+			nx = (_x - width() / 2.) * (-z + 1);
+			ny = (_y - height() / 2.) * (-z + 1);
+		}
+		_zoom = newZoom;
+		z = (_zoom == ZoomToScreenLevel) ? _zoomToScreen : _zoom;
+		if (z > 0) {
+			_w = qRound(_w * (z + 1));
+			_h = qRound(_h * (z + 1));
+			_x = qRound(nx * (z + 1) + width() / 2.);
+			_y = qRound(ny * (z + 1) + height() / 2.);
+		}
+		else {
+			_w = qRound(_w / (-z + 1));
+			_h = qRound(_h / (-z + 1));
+			_x = qRound(nx / (-z + 1) + width() / 2.);
+			_y = qRound(ny / (-z + 1) + height() / 2.);
+		}
+		snapXY();
+		update();
+	}
+}
+
 MediaView::~MediaView() {
 	deleteAndMark(_gif);
 	deleteAndMark(_menu);
@@ -1182,7 +1285,7 @@ void MediaView::paintEvent(QPaintEvent *e) {
 						App::roundRect(p, _saveMsg, st::medviewSaveMsg, MediaviewSaveCorners);
 						p.drawSprite(_saveMsg.topLeft() + st::medviewSaveMsgCheckPos, st::medviewSaveMsgCheck);
 
-						p.setPen(st::white->p);
+						p.setPen(st::black->p);
 						textstyleSet(&st::medviewSaveAsTextStyle);
 						_saveMsgText.draw(p, _saveMsg.x() + st::medviewSaveMsgPadding.left(), _saveMsg.y() + st::medviewSaveMsgPadding.top(), _saveMsg.width() - st::medviewSaveMsgPadding.left() - st::medviewSaveMsgPadding.right());
 						textstyleRestore();
@@ -1233,7 +1336,7 @@ void MediaView::paintEvent(QPaintEvent *e) {
 
 					QRect inner(QPoint(_docIconRect.x() + ((_docIconRect.width() - st::radialSize.width()) / 2), _docIconRect.y() + ((_docIconRect.height() - st::radialSize.height()) / 2)), st::radialSize);
 					p.setPen(Qt::NoPen);
-					p.setBrush(st::black);
+					p.setBrush(st::white);
 					p.setOpacity(radialOpacity * st::radialBgOpacity);
 
 					p.setRenderHint(QPainter::HighQualityAntialiasing);
@@ -1329,7 +1432,7 @@ void MediaView::paintEvent(QPaintEvent *e) {
 			p.drawSprite(_moreNavIcon.topLeft(), st::mvMore);
 		}
 
-		p.setPen(st::white->p);
+		p.setPen(st::black->p);
 		p.setFont(st::mvThickFont->f);
 
 		// header
@@ -1380,7 +1483,7 @@ void MediaView::paintEvent(QPaintEvent *e) {
 				p.drawRoundedRect(outer, st::mvCaptionRadius, st::mvCaptionRadius);
 				if (_captionRect.intersects(r)) {
 					textstyleSet(&st::medviewSaveAsTextStyle);
-					p.setPen(st::white->p);
+					p.setPen(st::black->p);
 					_caption.drawElided(p, _captionRect.x(), _captionRect.y(), _captionRect.width(), _captionRect.height() / st::mvCaptionFont->height);
 					textstyleRestore();
 				}
@@ -1404,91 +1507,25 @@ void MediaView::keyPressEvent(QKeyEvent *e) {
 		moveToNext(-1);
 	} else if (e->key() == Qt::Key_Right) {
 		moveToNext(1);
-    } else if (e->modifiers().testFlag(Qt::ControlModifier) && (e->key() == Qt::Key_Plus || e->key() == Qt::Key_Equal || e->key() == ']' || e->key() == Qt::Key_Asterisk || e->key() == Qt::Key_Minus || e->key() == Qt::Key_Underscore || e->key() == Qt::Key_0)) {
-		int32 newZoom = _zoom;
-        if (e->key() == Qt::Key_Plus || e->key() == Qt::Key_Equal || e->key() == Qt::Key_Asterisk || e->key() == ']') {
-			if (newZoom == ZoomToScreenLevel) {
-				if (qCeil(_zoomToScreen) <= MaxZoomLevel) {
-					newZoom = qCeil(_zoomToScreen);
-				}
-			} else {
-				if (newZoom < _zoomToScreen && (newZoom + 1 > _zoomToScreen || (_zoomToScreen > MaxZoomLevel && newZoom == MaxZoomLevel))) {
-					newZoom = ZoomToScreenLevel;
-				} else if (newZoom < MaxZoomLevel) {
-					++newZoom;
-				}
-			}
+	} else if (e->modifiers().testFlag(Qt::ControlModifier) && (e->key() == Qt::Key_Plus || e->key() == Qt::Key_Equal || e->key() == ']' || e->key() == Qt::Key_Asterisk || e->key() == Qt::Key_Minus || e->key() == Qt::Key_Underscore || e->key() == Qt::Key_0)) {
+		if (e->key() == Qt::Key_Plus || e->key() == Qt::Key_Equal || e->key() == Qt::Key_Asterisk || e->key() == ']') {
+			zoomIn();
 		} else if (e->key() == Qt::Key_Minus || e->key() == Qt::Key_Underscore) {
-			if (newZoom == ZoomToScreenLevel) {
-				if (qFloor(_zoomToScreen) >= -MaxZoomLevel) {
-					newZoom = qFloor(_zoomToScreen);
-				}
-			} else {
-				if (newZoom > _zoomToScreen && (newZoom - 1 < _zoomToScreen || (_zoomToScreen < -MaxZoomLevel && newZoom == -MaxZoomLevel))) {
-					newZoom = ZoomToScreenLevel;
-				} else if (newZoom > -MaxZoomLevel) {
-					--newZoom;
-				}
-			}
+			zoomOut();
 		} else {
-			if (_zoom == 0) {
-				if (qFloor(_zoomToScreen) == qCeil(_zoomToScreen) && qRound(_zoomToScreen) >= -MaxZoomLevel && qRound(_zoomToScreen) <= MaxZoomLevel) {
-					newZoom = qRound(_zoomToScreen);
-				} else {
-					newZoom = ZoomToScreenLevel;
-				}
-			} else {
-				newZoom = 0;
-			}
-			_x = -_width / 2;
-			_y = -((gifShown() ? _gif->height() : (_current.height() / cIntRetinaFactor())) / 2);
-			float64 z = (_zoom == ZoomToScreenLevel) ? _zoomToScreen : _zoom;
-			if (z >= 0) {
-				_x = qRound(_x * (z + 1));
-				_y = qRound(_y * (z + 1));
-			} else {
-				_x = qRound(_x / (-z + 1));
-				_y = qRound(_y / (-z + 1));
-			}
-			_x += width() / 2;
-			_y += height() / 2;
-			update();
-		}
-		if (newZoom != ZoomToScreenLevel) {
-			while ((newZoom < 0 && (-newZoom + 1) > _w) || (-newZoom + 1) > _h) {
-				++newZoom;
-			}
-		}
-		if (_zoom != newZoom) {
-			float64 nx, ny, z = (_zoom == ZoomToScreenLevel) ? _zoomToScreen : _zoom;
-			_w = gifShown() ? _gif->width() : (_current.width() / cIntRetinaFactor());
-			_h = gifShown() ? _gif->height() : (_current.height() / cIntRetinaFactor());
-			if (z >= 0) {
-				nx = (_x - width() / 2.) / (z + 1);
-				ny = (_y - height() / 2.) / (z + 1);
-			} else {
-				nx = (_x - width() / 2.) * (-z + 1);
-				ny = (_y - height() / 2.) * (-z + 1);
-			}
-			_zoom = newZoom;
-			z = (_zoom == ZoomToScreenLevel) ? _zoomToScreen : _zoom;
-			if (z > 0) {
-				_w = qRound(_w * (z + 1));
-				_h = qRound(_h * (z + 1));
-				_x = qRound(nx * (z + 1) + width() / 2.);
-				_y = qRound(ny * (z + 1) + height() / 2.);
-			} else {
-				_w = qRound(_w / (-z + 1));
-				_h = qRound(_h / (-z + 1));
-				_x = qRound(nx / (-z + 1) + width() / 2.);
-				_y = qRound(ny / (-z + 1) + height() / 2.);
-			}
-			snapXY();
-			update();
+			zoomReset();
 		}
 	}
 }
 
+void MediaView::wheelEvent(QWheelEvent *e) {
+	if (e->delta() < 0) {
+		(e->modifiers().testFlag(Qt::ControlModifier)) ? zoomOut() : moveToNext(-1);
+	}
+	else {
+		(e->modifiers().testFlag(Qt::ControlModifier)) ? zoomIn() : moveToNext(1);
+	}
+}
 bool MediaView::moveToNext(int32 delta) {
 	if (_index < 0) {
 		if (delta == -1 && _photo == _additionalChatPhoto) {
@@ -1695,6 +1732,8 @@ void MediaView::mousePressEvent(QMouseEvent *e) {
 				_yStart = _y;
 			}
 		}
+	} else if (e->button() == Qt::MiddleButton) {
+		zoomReset();
 	}
 	activateControls();
 }

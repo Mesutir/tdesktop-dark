@@ -22,7 +22,7 @@ using "basic.style";
 
 historyToDown: icon {
 	{ "history_down_shadow", #00000040 },
-	{ "history_down_circle", #fff, point(2px, 1px) },
+	{ "history_down_circle", #1f2224, point(2px, 1px) },
 };
 historyToDownPosition: point(12px, 10px);
 historyToDownArrow: icon {

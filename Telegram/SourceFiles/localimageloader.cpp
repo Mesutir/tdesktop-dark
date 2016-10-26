@@ -328,7 +328,8 @@ void FileLoadTask::process() {
 				}
 			}
 		}
-		if (filemime == qstr("video/mp4") || filename.endsWith(qstr(".mp4"), Qt::CaseInsensitive) || animated) {
+		if (filemime == qstr("video/mp4") || filename.endsWith(qstr(".mp4"), Qt::CaseInsensitive) || animated
+			|| filemime == qstr("video/webm") || filename.endsWith(qstr(".webm"), Qt::CaseInsensitive)) {
 			QImage cover;
 			MTPDocumentAttribute animatedAttribute = clipReadAnimatedAttributes(_filepath, _content, cover);
 			if (animatedAttribute.type() == mtpc_documentAttributeVideo) {
@@ -355,6 +356,9 @@ void FileLoadTask::process() {
 					if (filename.endsWith(qstr(".mp4"), Qt::CaseInsensitive)) {
 						filemime = qstr("video/mp4");
 					}
+					else if (filename.endsWith(qstr(".webm"), Qt::CaseInsensitive)) {
+						filemime = qstr("video/webm");
+					}
 				}
 			}
 		}
@@ -376,7 +380,7 @@ void FileLoadTask::process() {
 				photoThumbs.insert('m', medium);
 				photoSizes.push_back(MTP_photoSize(MTP_string("m"), MTP_fileLocationUnavailable(MTP_long(0), MTP_int(0), MTP_long(0)), MTP_int(medium.width()), MTP_int(medium.height()), MTP_int(0)));
 
-				QPixmap full = (w > 1280 || h > 1280) ? QPixmap::fromImage(fullimage.scaled(1280, 1280, Qt::KeepAspectRatio, Qt::SmoothTransformation), Qt::ColorOnly) : QPixmap::fromImage(fullimage);
+				QPixmap full = (w > 1920 || h > 1920) ? QPixmap::fromImage(fullimage.scaled(1920, 1920, Qt::KeepAspectRatio, Qt::SmoothTransformation), Qt::ColorOnly) : QPixmap::fromImage(fullimage);
 				photoThumbs.insert('y', full);
 				photoSizes.push_back(MTP_photoSize(MTP_string("y"), MTP_fileLocationUnavailable(MTP_long(0), MTP_int(0), MTP_long(0)), MTP_int(full.width()), MTP_int(full.height()), MTP_int(0)));
 

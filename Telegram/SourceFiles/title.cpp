@@ -326,34 +326,10 @@ void TitleWidget::showUpdateBtn() {
 	}
 	if (cHasPasscode()) {
 		_lock.show();
-	} else {
+	}
+	else {
 		_lock.hide();
 	}
-#ifndef TDESKTOP_DISABLE_AUTOUPDATE
-	bool updateReady = (Sandbox::updatingState() == Application::UpdatingReady);
-#else
-	bool updateReady = false;
-#endif
-	if (updateReady || cEvalScale(cConfigScale()) != cEvalScale(cRealScale())) {
-		_update.setText(lang(updateReady ? lng_menu_update : lng_menu_restart));
-		_update.show();
-		resizeEvent(0);
-		_minimize.hide();
-		_restore.hide();
-		_maximize.hide();
-		_close.hide();
-		_a_update.start();
-	} else {
-		_update.hide();
-		if (cPlatform() == dbipWindows) {
-			_minimize.show();
-			maximizedChanged(lastMaximized, true);
-			_close.show();
-		}
-		_a_update.stop();
-	}
-	resizeEvent(0);
-	update();
 }
 
 void TitleWidget::maximizedChanged(bool maximized, bool force) {

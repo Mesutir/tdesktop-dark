@@ -189,6 +189,7 @@ storage.fileMov#4b09ebbc = storage.FileType;
 storage.filePartial#40bc6f52 = storage.FileType;
 storage.fileMp4#b3cea0e4 = storage.FileType;
 storage.fileWebp#1081464c = storage.FileType;
+storage.fileWebm#b3cea0e4 = storage.FileType;
 
 fileLocationUnavailable#7c596b46 volume_id:long local_id:int secret:long = FileLocation;
 fileLocation#53d69076 dc_id:int volume_id:long local_id:int secret:long = FileLocation;

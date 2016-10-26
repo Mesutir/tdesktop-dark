@@ -21,51 +21,51 @@ Copyright (c) 2014-2016 John Preston, https://desktop.telegram.org
 using "basic.style";
 using "basic_types.style";
 
-dialogsUnreadFg: #ffffff;
-dialogsUnreadFgActive: #5b94bf;
-dialogsUnreadBg: #009ce6;//#6fc766;
-dialogsUnreadBgMuted: #bbb;
-dialogsUnreadBgActive: #ffffff;
-dialogsUnreadBgMutedActive: #d3e2ee;
+dialogsUnreadFg: #232629;
+dialogsUnreadFgActive: #232629;
+dialogsUnreadBg: #BBB;//#6fc766;
+dialogsUnreadBgMuted: #999;
+dialogsUnreadBgActive: #BBB;
+dialogsUnreadBgMutedActive: #BBB;
 dialogsUnreadFont: font(12px bold);
 dialogsUnreadHeight: 19px;
 dialogsUnreadTop: 1px;
 dialogsUnreadPadding: 5px;
 
 dialogsBg: windowBg;
-dialogsBgOver: #f5f5f5;
-dialogsBgActive: #6a91b1;
-dialogsTextFont: font(fsize);
+dialogsBgOver: #222222;
+dialogsBgActive: #222222;
+dialogsTextFont: font(10px);
 dialogsTextFg: #888888;
-dialogsTextFgService: #4981af;
+dialogsTextFgService: #999;
 dialogsTextFgActive: #ffffff;
-dialogsDateFont: font(13px);
+dialogsDateFont: font(10px);
 dialogsDateFgActive: #ffffff;
-dialogsDateFg: #a8a8a8;
+dialogsDateFg: #eee;
 dialogsDateSkip: 5px;
-dialogsNameFg: #000;
+dialogsNameFg: #eee;
 dialogsNameTop: 2px;
 
-dialogsRowHeight: 62px;
+dialogsRowHeight: 30px;
 dialogsFilterPadding: 10px;
-dialogsPhotoSize: 46px;
-dialogsPhotoPadding: 12px;
-dialogsPadding: point(10px, 8px);
+dialogsPhotoSize: 26px;
+dialogsPhotoPadding: 4px;
+dialogsPadding: point(10px, 4px);
 
 dialogsImportantBarHeight: 37px;
 
 dialogsSkip: 8px;
 
-dialogsWidthMin: 260px;
-dialogsWidthMax: 540px;
+dialogsWidthMin: 120px;
+dialogsWidthMax: 140px;
 dialogsTextWidthMin: 150px;
 dialogsScroll: flatScroll(scrollDef) {
 	topsh: 0px;
 	bottomsh: 0px;
 }
 
-dialogsChatImgPos: point(1px, 4px);
-dialogsChannelImgPos: point(3px, 4px);
+dialogsChatImgPos: point(1px, 2px);
+dialogsChannelImgPos: point(3px, 2px);
 dialogsImgSkip: 22px;
 
 dialogsCheckLeft: 5px;
@@ -75,7 +75,7 @@ dialogsCheckSkip: 3px;
 dialogsTextStyle: textStyle(defaultTextStyle) {
 	linkFg: dialogsTextFgService;
 	linkFgDown: dialogsTextFgService;
-	linkFlagsOver: font(fsize);
+	linkFlagsOver: font(10px);
 }
 dialogsTextStyleDraft: textStyle(dialogsTextStyle) {
 	linkFg: #dd4b39;

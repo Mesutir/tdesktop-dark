@@ -138,7 +138,7 @@ enum {
 	StickersUpdateTimeout = 3600000, // update not more than once in an hour
 
 	SearchPeopleLimit = 5,
-	MinUsernameLength = 5,
+	MinUsernameLength = 1,
 	MaxUsernameLength = 32,
 	UsernameCheckTimeout = 200,
 

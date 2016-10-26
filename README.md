@@ -6,6 +6,28 @@ This is the complete source code and the build instructions for the alpha versio
 
 The source code is published under GPLv3 with OpenSSL exception, the license is available [here][license].
 
+## Dark theme
+
+**This fork of Telegram Desktop has a dark theme**
+
+![](tgdark.png)
+
+Windows: Binary download can be found under [releases](https://github.com/NXij/tdesktop-dark/releases)
+Arch Linux: PKGBUILD on [aur](https://aur.archlinux.org/packages/telegram-desktop-dark-git/)
+
+
+Co-development and messing-around with [JuanPotato](https://github.com/JuanPotato) and [Melvin V.](https://mel.vin/)
+
+Melvin V. has his own fork of telegram with seperate patches [link to his Gitlab](https://git.mel.vin/melvin/telegram-desktop)
+
+## Custom build changelog
+### 2016-07-08
+
+* Darker theme
+* Messages from the same author are now grouped together
+* Everything is now square instead of bubbles
+* Incorporated scroll to zoom from [EXL](https://github.com/EXL)
+
 ## Supported systems
 
 * Windows XP - Windows 10 (**not** RT)
